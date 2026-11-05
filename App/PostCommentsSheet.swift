@@ -259,7 +259,6 @@ struct PostCommentsSheet: View {
             if #available(iOS 27.1, *), usesVerticalBrowserControls {
                 VerticalBrowserToolbar(
                     fallbackURL: fallbackURL,
-                    onDismiss: onDismiss,
                     onToggleComments: {
                         if isExpanded {
                             collapseSheet()
@@ -272,7 +271,6 @@ struct PostCommentsSheet: View {
                 )
             }
         }
-        .navigationBarBackButtonHidden(usesVerticalBrowserControls)
         .onChange(of: usesVerticalBrowserControls) { _, _ in
             updateBrowserObscuredBottomInset()
         }

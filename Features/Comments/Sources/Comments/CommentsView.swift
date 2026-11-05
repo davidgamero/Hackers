@@ -320,7 +320,6 @@ private extension CommentsView {
         if #available(iOS 27.1, *) {
             AdaptiveCommentsToolbarActions(
                 post: viewModel.post,
-                toolbarGeometry: toolbarGeometry,
                 isRefreshing: isToolbarRefreshing,
                 onRefresh: allowsRefresh ? { refreshFromToolbar() } : nil
             )

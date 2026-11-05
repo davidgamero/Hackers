@@ -90,7 +90,6 @@ struct MainContentView: View {
                 isSidebar: isRegularWidth,
                 whatsNewPanel: whatsNewPanel
             )
-            .navigationSplitViewColumnWidth(min: 320, ideal: 375, max: 400)
         } detail: {
             NavigationStack(path: detailPathBinding) {
                 Group {

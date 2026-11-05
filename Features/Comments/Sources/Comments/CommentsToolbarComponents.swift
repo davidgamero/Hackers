@@ -284,35 +284,27 @@ struct ShareMenu: View {
     }
 }
 
-/// Comments actions that move into the system's vertical toolbar rail when it
-/// is available (iPhone Duo), and keep the standard trailing share button otherwise.
+/// Comments actions as symbol items with titles, so the system can place them in the
+/// iPhone Duo vertical bar or a horizontal bar as the pose changes. The same items are
+/// declared in every pose; switching item sets on the bar's edge left empty slots when
+/// the bar moved between displays.
 @available(iOS 27.1, *)
 struct AdaptiveCommentsToolbarActions: ToolbarContent {
-    @Environment(\.toolbarVerticalEdge) private var verticalEdge
     let post: Post?
-    let toolbarGeometry: CommentsToolbarGeometry?
     let isRefreshing: Bool
     let onRefresh: (() -> Void)?
 
     var body: some ToolbarContent {
-        if verticalEdge != nil {
-            if let onRefresh {
-                ToolbarItem(id: "comments.refresh", placement: .topBarTrailing) {
-                    Button("Refresh", systemImage: "arrow.clockwise", action: onRefresh)
-                        .disabled(isRefreshing)
-                }
-                .axisBehavior(.verticalPreferred)
+        if let onRefresh {
+            ToolbarItem(id: "comments.refresh", placement: .topBarTrailing) {
+                Button("Refresh", systemImage: "arrow.clockwise", action: onRefresh)
+                    .disabled(isRefreshing)
             }
+        }
+        if let post {
             ToolbarItem(id: "comments.share", placement: .topBarTrailing) {
-                if let post {
-                    ShareMenu(post: post, toolbarGeometry: toolbarGeometry)
-                }
-            }
-            .axisBehavior(.verticalPreferred)
-        } else {
-            ToolbarItem(id: "comments.share", placement: .navigationBarTrailing) {
-                if let post {
-                    ShareMenu(post: post, toolbarGeometry: toolbarGeometry)
+                Button("Share", systemImage: "square.and.arrow.up") {
+                    ContentSharePresenter.shared.shareHackerNewsPost(post)
                 }
             }
         }

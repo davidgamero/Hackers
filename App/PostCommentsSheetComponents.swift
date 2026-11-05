@@ -640,26 +640,22 @@ private struct VerticalBrowserControlsEnvironment: ViewModifier {
 @available(iOS 27.1, *)
 struct VerticalBrowserToolbar: ToolbarContent {
     let fallbackURL: URL
-    let onDismiss: @MainActor () -> Void
     let onToggleComments: @MainActor () -> Void
     let showsComments: Bool
     @ObservedObject var controller: BrowserController
 
     var body: some ToolbarContent {
-        ToolbarItem(id: "browser.close", placement: .cancellationAction) {
-            Button("Close", systemImage: "xmark", action: onDismiss)
-        }
-        .axisBehavior(.verticalPreferred)
         if !showsComments {
             if controller.canGoBack {
                 ToolbarItem(id: "browser.back", placement: .topBarTrailing) {
-                    Button("Back", systemImage: "chevron.backward", action: controller.goBack)
+                    // Distinct from the system navigation Back at the top of the bar.
+                    Button("Previous Page", systemImage: "arrow.backward", action: controller.goBack)
                 }
                 .axisBehavior(.verticalPreferred)
             }
             if controller.canGoForward {
                 ToolbarItem(id: "browser.forward", placement: .topBarTrailing) {
-                    Button("Forward", systemImage: "chevron.forward", action: controller.goForward)
+                    Button("Next Page", systemImage: "arrow.forward", action: controller.goForward)
                 }
                 .axisBehavior(.verticalPreferred)
             }
@@ -684,29 +680,16 @@ struct VerticalBrowserToolbar: ToolbarContent {
                 }
             }
             .axisBehavior(.verticalPreferred)
-            ToolbarSpacer(.fixed, placement: .topBarTrailing)
         }
         ToolbarItem(id: "browser.commentsToggle", placement: .topBarTrailing) {
             // Keep one button alive as the browser actions enter/leave the bar,
             // so the system can move it rather than replacing the whole item.
-            Button(action: onToggleComments) {
-                Label {
-                    Text(showsComments ? "Show Article" : "Show Comments")
-                } icon: {
-                    if showsComments {
-                        ThumbnailView(
-                            url: fallbackURL,
-                            thumbnailSize: CGSize(width: 24, height: 24)
-                        )
-                        .frame(width: 24, height: 24)
-                        .clipShape(.rect(cornerRadius: 6))
-                    } else {
-                        Image(systemName: "message")
-                    }
-                }
-                .labelStyle(.iconOnly)
-            }
-            .accessibilityLabel(showsComments ? "Show Article" : "Show Comments")
+            // Symbol-only with a title, as vertical bars expect.
+            Button(
+                showsComments ? "Show Article" : "Show Comments",
+                systemImage: showsComments ? "doc.text" : "message",
+                action: onToggleComments
+            )
         }
         .axisBehavior(.verticalPreferred)
     }
