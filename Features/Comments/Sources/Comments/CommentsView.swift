@@ -62,6 +62,7 @@ public struct CommentsView<Store: NavigationStoreProtocol>: View {
     @State private var pendingCommentID: Int?
     @State private var replyScrollTarget: Int?
     @State private var composer = CommentComposerModel()
+    @State private var isToolbarRefreshing = false
 }
 
 public extension CommentsView {
@@ -238,11 +239,7 @@ public extension CommentsView {
                         )
                     }
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if let post = viewModel.post {
-                        ShareMenu(post: post, toolbarGeometry: toolbarGeometry)
-                    }
-                }
+                commentsActionsToolbarItems
             }
         }
         .task { [navigationStore] in
@@ -318,6 +315,36 @@ public extension CommentsView {
 }
 
 private extension CommentsView {
+    @ToolbarContentBuilder
+    var commentsActionsToolbarItems: some ToolbarContent {
+        if #available(iOS 27.1, *) {
+            AdaptiveCommentsToolbarActions(
+                post: viewModel.post,
+                toolbarGeometry: toolbarGeometry,
+                isRefreshing: isToolbarRefreshing,
+                onRefresh: allowsRefresh ? { refreshFromToolbar() } : nil
+            )
+        } else {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if let post = viewModel.post {
+                    ShareMenu(post: post, toolbarGeometry: toolbarGeometry)
+                }
+            }
+        }
+    }
+
+    private func refreshFromToolbar() {
+        guard !isToolbarRefreshing else { return }
+        isToolbarRefreshing = true
+        Task {
+            await viewModel.refreshComments()
+            if let targetID = pendingCommentID {
+                _ = viewModel.revealComment(withId: targetID)
+            }
+            isToolbarRefreshing = false
+        }
+    }
+
     private func handleLinkTap() {
         // Self posts have no external link; their URL is the HN item page of
         // this very view, so opening it would just re-push these comments.
@@ -329,11 +356,6 @@ private extension CommentsView {
             return
         }
         if navigationStore.openURLInPrimaryContext(post.url) {
-            return
-        }
-        let mode = DependencyContainer.shared.getSettingsUseCase().linkBrowserMode
-        if DeviceLayout.prefersInlineCustomBrowser(mode: mode) {
-            navigationStore.showPostLink(post)
             return
         }
         LinkOpener.openURL(post.url, with: post)
@@ -351,7 +373,10 @@ private extension CommentsView {
             return true
         }
 
-        navigationStore.showPost(withId: itemId)
+        // Push the linked item over these comments so Back returns here.
+        if !navigationStore.openURLInPrimaryContext(url) {
+            navigationStore.showPost(withId: itemId)
+        }
         return true
     }
 

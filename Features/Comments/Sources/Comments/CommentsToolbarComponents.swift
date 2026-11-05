@@ -284,6 +284,41 @@ struct ShareMenu: View {
     }
 }
 
+/// Comments actions that move into the system's vertical toolbar rail when it
+/// is available (iPhone Duo), and keep the standard trailing share button otherwise.
+@available(iOS 27.1, *)
+struct AdaptiveCommentsToolbarActions: ToolbarContent {
+    @Environment(\.toolbarVerticalEdge) private var verticalEdge
+    let post: Post?
+    let toolbarGeometry: CommentsToolbarGeometry?
+    let isRefreshing: Bool
+    let onRefresh: (() -> Void)?
+
+    var body: some ToolbarContent {
+        if verticalEdge != nil {
+            if let onRefresh {
+                ToolbarItem(id: "comments.refresh", placement: .topBarTrailing) {
+                    Button("Refresh", systemImage: "arrow.clockwise", action: onRefresh)
+                        .disabled(isRefreshing)
+                }
+                .axisBehavior(.verticalPreferred)
+            }
+            ToolbarItem(id: "comments.share", placement: .topBarTrailing) {
+                if let post {
+                    ShareMenu(post: post, toolbarGeometry: toolbarGeometry)
+                }
+            }
+            .axisBehavior(.verticalPreferred)
+        } else {
+            ToolbarItem(id: "comments.share", placement: .navigationBarTrailing) {
+                if let post {
+                    ShareMenu(post: post, toolbarGeometry: toolbarGeometry)
+                }
+            }
+        }
+    }
+}
+
 struct LoadingView: View {
     var body: some View {
         AppLoadingStateView(message: "Loading...")

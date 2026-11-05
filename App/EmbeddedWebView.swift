@@ -169,7 +169,7 @@ final class BrowserController: ObservableObject {
     /// using it docks page chrome ~50pt too low, which reads as a large
     /// empty band above sites like JetKVM.
     private func applyStatusBarObscuredInset() {
-        guard !DeviceLayout.usesPadLayout else { return }
+        guard !DeviceLayout.usesRegularWidthLayout else { return }
         guard let topInset = webView.window?.safeAreaInsets.top, topInset > 0 else { return }
         guard abs(webView.obscuredContentInsets.top - topInset) > 0.5 else { return }
 
@@ -280,6 +280,7 @@ enum WebViewAnimations {
 
 struct EmbeddedWebView: View {
     private static let headerBlurHeight: CGFloat = 48
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     let url: URL
     let onDismiss: @MainActor () -> Void
@@ -330,25 +331,31 @@ struct EmbeddedWebView: View {
                         backButton
                     }
                 }
+                .preferVerticalToolbarAxis()
                 ToolbarItem(placement: .topBarTrailing) {
                     if controller.canGoForward {
                         forwardButton
                     }
                 }
+                .preferVerticalToolbarAxis()
                 ToolbarItem(placement: .topBarTrailing) {
                     reloadButton
                 }
+                .preferVerticalToolbarAxis()
                 ToolbarItem(placement: .topBarTrailing) {
                     shareButton
                 }
+                .preferVerticalToolbarAxis()
                 ToolbarItem(placement: .topBarTrailing) {
                     openInSafariButton
                 }
+                .preferVerticalToolbarAxis()
                 ToolbarItem(placement: .topBarTrailing) {
                     if showsCloseButton {
                         closeButton
                     }
                 }
+                .preferVerticalToolbarAxis()
             }
         }
         .toolbarBackground(.hidden, for: .navigationBar)
@@ -395,7 +402,7 @@ struct EmbeddedWebView: View {
     }
 
     private var isPadLayout: Bool {
-        DeviceLayout.usesPadLayout
+        horizontalSizeClass == .regular || DeviceLayout.isRunningOnMac
     }
     private var bottomPanelInsetHeight: CGFloat {
         guard !showsToolbar else { return 0 }
@@ -867,14 +874,16 @@ struct PostLinkBrowserView: View {
     @Environment(\.dismiss) private var dismiss
     let post: Post
     let presentation: PostLinkPresentation
+    let onClose: (@MainActor () -> Void)?
     @State private var showingCommentsPane = false
     @State private var collapsedCommentsHeight = PostCommentsSheet.initialCollapsedHeight
     @State private var browserObscuredBottomInset = PostCommentsSheet.collapsedBrowserBottomInset
     @StateObject private var browserController: BrowserController
 
-    init(post: Post, presentation: PostLinkPresentation) {
+    init(post: Post, presentation: PostLinkPresentation, onClose: (@MainActor () -> Void)? = nil) {
         self.post = post
         self.presentation = presentation
+        self.onClose = onClose
         _showingCommentsPane = State(initialValue: presentation == .expandedComments)
         _browserController = StateObject(wrappedValue: BrowserController(
             mediaPlaybackSuspended: presentation == .expandedComments
@@ -885,7 +894,7 @@ struct PostLinkBrowserView: View {
         ZStack(alignment: .bottom) {
             EmbeddedWebView(
                 url: post.url,
-                onDismiss: { dismiss() },
+                onDismiss: close,
                 showsCloseButton: false,
                 showsToolbar: false,
                 bottomWebViewInset: browserBottomInset,
@@ -898,7 +907,7 @@ struct PostLinkBrowserView: View {
                     post: post,
                     controller: browserController,
                     initialPresentation: presentation,
-                    onDismiss: { dismiss() },
+                    onDismiss: close,
                     onCollapsedHeightChange: { collapsedCommentsHeight = $0 },
                     onBrowserObscuredBottomInsetChange: { browserObscuredBottomInset = $0 },
                     onMediaPlaybackSuspensionChange: { isSuspended in
@@ -925,7 +934,27 @@ struct PostLinkBrowserView: View {
         }
     }
 
+    private func close() {
+        if let onClose {
+            onClose()
+        } else {
+            dismiss()
+        }
+    }
+
     private var browserBottomInset: CGFloat {
         max(collapsedCommentsHeight - PostCommentsSheet.collapsedTopCornerRadius, 0)
+    }
+}
+
+private extension ToolbarContent {
+    /// Lets the item move into the iPhone Duo vertical toolbar rail when one is shown.
+    @ToolbarContentBuilder
+    func preferVerticalToolbarAxis() -> some ToolbarContent {
+        if #available(iOS 27.1, *) {
+            axisBehavior(.verticalPreferred)
+        } else {
+            self
+        }
     }
 }
