@@ -101,6 +101,29 @@ final class FeedAndSettingsUITests: HackersUITestCase {
         )
     }
 
+    func testMediumWidgetFixtureKeepsThreeRowsInsideBounds() throws {
+        app = XCUIApplication(bundleIdentifier: "com.weiranzhang.Hackers")
+        app.terminate()
+        app.launchArguments = ["widgetLayoutFixture"]
+        app.launch()
+
+        let widget = app.descendants(matching: .any)
+            .matching(identifier: "widget.fixture.medium").firstMatch
+        XCTAssertTrue(widget.waitForExistence(timeout: 5))
+        let header = app.descendants(matching: .any).matching(identifier: "widget.header").firstMatch
+        assertFullyContained(header, in: widget)
+        for id in 91_001...91_003 {
+            let row = app.descendants(matching: .any)
+                .matching(identifier: "widget.story.\(id)").firstMatch
+            assertFullyContained(row, in: widget)
+        }
+
+        let screenshot = XCTAttachment(screenshot: app.screenshot())
+        screenshot.name = "Medium widget overflow fixture"
+        screenshot.lifetime = .keepAlways
+        add(screenshot)
+    }
+
     func testLoginFailureAndSuccessUseMockedAuthentication() throws {
         launchApp()
 

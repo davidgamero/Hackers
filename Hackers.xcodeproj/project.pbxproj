@@ -46,6 +46,13 @@
 			remoteGlobalIDString = 2419D01F24898DF700740184;
 			remoteInfo = HackersActionExtension;
 		};
+		AA300001000000000000000B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 24F39F7D18AFB1150055F8DC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA3000010000000000000002;
+			remoteInfo = HackersWidget;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -56,6 +63,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				24D1E48C2D9810B8005F1038 /* HackersActionExtension.appex in Embed Foundation Extensions */,
+				AA3000010000000000000009 /* HackersWidget.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -138,6 +146,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AA3000010000000000000007 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA300001000000000000000E /* Shared in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -146,6 +162,7 @@
 			children = (
 				241E7A262E4CB2830013EEA1 /* App */,
 				241E7A5C2E4CB28F0013EEA1 /* Extensions */,
+				AA300001000000000000000C /* Widgets */,
 				2432F7502E7C2F5200BA0D54 /* Assets */,
 				FFB3915B9B304E5FBCC9CFCE /* HackersUITests */,
 				24F39F8718AFB1150055F8DC /* Frameworks */,
@@ -175,6 +192,7 @@
 			children = (
 				24F39F8518AFB1150055F8DC /* Hackers.app */,
 				2419D02024898DF700740184 /* HackersActionExtension.appex */,
+				AA3000010000000000000001 /* HackersWidget.appex */,
 				17AFE2AC4DD34C2F82AF632D /* HackersUITests.xctest */,
 			);
 			name = Products;
@@ -188,6 +206,24 @@
 				24F39F8C18AFB1150055F8DC /* UIKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		AA300001000000000000000C /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				AA3000010000000000000015 /* HackersWidget */,
+			);
+			path = Widgets;
+			sourceTree = "<group>";
+		};
+		AA3000010000000000000015 /* HackersWidget */ = {
+			isa = PBXGroup;
+			children = (
+				AA3000010000000000000010 /* HackersWidgetBundle.swift */,
+				AA3000010000000000000011 /* TopStoriesWidget.swift */,
+				AA3000010000000000000012 /* Info.plist */,
+			);
+			path = HackersWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -248,6 +284,7 @@
 			);
 			dependencies = (
 				24D1E48B2D981085005F1038 /* PBXTargetDependency */,
+				AA300001000000000000000A /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				241E7A262E4CB2830013EEA1 /* App */,
@@ -268,6 +305,26 @@
 			productReference = 24F39F8518AFB1150055F8DC /* Hackers.app */;
 			productType = "com.apple.product-type.application";
 		};
+		AA3000010000000000000002 /* HackersWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA3000010000000000000003 /* Build configuration list for PBXNativeTarget "HackersWidget" */;
+			buildPhases = (
+				AA3000010000000000000006 /* Sources */,
+				AA3000010000000000000007 /* Frameworks */,
+				AA3000010000000000000008 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HackersWidget;
+			packageProductDependencies = (
+				243C00122E8B000100000001 /* Shared */,
+			);
+			productName = HackersWidget;
+			productReference = AA3000010000000000000001 /* HackersWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -282,6 +339,9 @@
 				TargetAttributes = {
 					2419D01F24898DF700740184 = {
 						CreatedOnToolsVersion = 11.5;
+					};
+					AA3000010000000000000002 = {
+						CreatedOnToolsVersion = 27.2;
 					};
 					24F39F8418AFB1150055F8DC = {
 						LastSwiftMigration = 1020;
@@ -315,6 +375,7 @@
 			targets = (
 				24F39F8418AFB1150055F8DC /* Hackers */,
 				2419D01F24898DF700740184 /* HackersActionExtension */,
+				AA3000010000000000000002 /* HackersWidget */,
 				4ACB6418B0D34871A7E10FEC /* HackersUITests */,
 			);
 		};
@@ -336,6 +397,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		24F39F8318AFB1150055F8DC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA3000010000000000000008 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -392,6 +460,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AA3000010000000000000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA3000010000000000000013 /* HackersWidgetBundle.swift in Sources */,
+				AA3000010000000000000014 /* TopStoriesWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -404,6 +481,11 @@
 			isa = PBXTargetDependency;
 			target = 2419D01F24898DF700740184 /* HackersActionExtension */;
 			targetProxy = 24D1E48A2D981085005F1038 /* PBXContainerItemProxy */;
+		};
+		AA300001000000000000000A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA3000010000000000000002 /* HackersWidget */;
+			targetProxy = AA300001000000000000000B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -693,6 +775,55 @@
 			};
 			name = Release;
 		};
+		AA3000010000000000000004 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 170;
+				DEVELOPMENT_TEAM = 2KB59GPA9B;
+				INFOPLIST_FILE = Widgets/HackersWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 5.6.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.weiranzhang.Hackers.Widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 6.4;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AA3000010000000000000005 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 170;
+				DEVELOPMENT_TEAM = 2KB59GPA9B;
+				INFOPLIST_FILE = Widgets/HackersWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 5.6.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.weiranzhang.Hackers.Widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.weiranzhang.Hackers.Widget";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 6.4;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -728,6 +859,15 @@
 			buildConfigurations = (
 				24F39FB218AFB1150055F8DC /* Debug */,
 				24F39FB318AFB1150055F8DC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA3000010000000000000003 /* Build configuration list for PBXNativeTarget "HackersWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA3000010000000000000004 /* Debug */,
+				AA3000010000000000000005 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

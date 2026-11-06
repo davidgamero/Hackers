@@ -42,7 +42,17 @@ struct HackersApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainContentView()
+            Group {
+                #if DEBUG
+                if ProcessInfo.processInfo.arguments.contains("widgetLayoutFixture") {
+                    WidgetLayoutFixtureView()
+                } else {
+                    MainContentView()
+                }
+                #else
+                MainContentView()
+                #endif
+            }
                 .environment(navigationStore)
                 .environment(sessionService)
                 .environment(toastPresenter)
