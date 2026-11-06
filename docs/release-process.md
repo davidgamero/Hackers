@@ -41,9 +41,10 @@ Before starting a release, confirm:
   * `MATCH_PASSWORD`
   * `MATCH_GIT_BASIC_AUTHORIZATION` or equivalent match repo access
 * The App Store Connect API key can read builds, upload builds, update TestFlight metadata, submit for TestFlight beta review when required, distribute to external testers, and submit App Store builds for review.
-* The match repository contains App Store signing assets for both bundle IDs:
+* The match repository contains App Store signing assets for all bundle IDs:
   * `com.weiranzhang.Hackers`
   * `com.weiranzhang.Hackers.ActionExtension`
+  * `com.weiranzhang.Hackers.Widget`
 * Your local `master` is current, clean, and points to the commit intended for release:
 
   ```bash
@@ -58,8 +59,8 @@ Before starting a release, confirm:
 ## Release Checklist
 
 1. Decide whether this is a new marketing version or another build for the current marketing version.
-2. Update `MARKETING_VERSION` for both targets when needed.
-3. Bump `CURRENT_PROJECT_VERSION` for both targets to the build number that will appear after `+` in the release tag.
+2. Update `MARKETING_VERSION` for all app and extension targets when needed.
+3. Bump `CURRENT_PROJECT_VERSION` for all app and extension targets to the build number that will appear after `+` in the release tag.
 4. Update app-facing "What's New" content when the build includes user-visible changes.
 5. Draft custom App Store release notes when this build is intended for App Store submission.
 6. Run local validation when practical.
@@ -72,12 +73,13 @@ Before starting a release, confirm:
 
 ## Prepare A Release
 
-Update `MARKETING_VERSION` in `Hackers.xcodeproj` for both targets when needed:
+Update `MARKETING_VERSION` in `Hackers.xcodeproj` for all targets when needed:
 
 * `Hackers`
 * `HackersActionExtension`
+* `HackersWidget`
 
-Bump `CURRENT_PROJECT_VERSION` for both targets before tagging. This value must:
+Bump `CURRENT_PROJECT_VERSION` for all targets before tagging. This value must:
 
 * match the `+N` build part of the tag
 * be greater than the previous App Store Connect build for that marketing version
@@ -136,7 +138,7 @@ gh workflow run release-testflight.yml \
 ```
 
 Existing-build distribution, local IPA upload, and App Store submission validate the
-Release version and build number of both app targets in the requested Git tag.
+Release version and build number of all app and extension targets in the requested Git tag.
 They select that tag's version/build even when the workflow checkout has advanced
 to a newer version. Keep running the maintained workflow/Fastlane code; do not
 check out old release automation merely to select an older build. New archives
@@ -172,7 +174,7 @@ gh workflow run release-testflight.yml \
 ```
 
 The local IPA must already contain the intended marketing version and build number,
-both app targets must be signed for distribution, and the filename must match the
+all app and extension targets must be signed for distribution, and the filename must match the
 asset passed to `local_ipa_asset`. Do not upload a locally built IPA under a tag whose
 build number does not match the IPA.
 

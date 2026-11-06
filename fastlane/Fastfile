@@ -13,6 +13,7 @@ PROJECT = File.join(REPO_ROOT, "Hackers.xcodeproj")
 SCHEME = "Hackers"
 APP_IDENTIFIER = "com.weiranzhang.Hackers"
 EXTENSION_IDENTIFIER = "com.weiranzhang.Hackers.ActionExtension"
+WIDGET_IDENTIFIER = "com.weiranzhang.Hackers.Widget"
 TEAM_ID = "2KB59GPA9B"
 DESTINATION = "platform=iOS Simulator,name=iPhone 17 Pro"
 RELEASE_DIR = File.join(REPO_ROOT, "artifacts/release")
@@ -243,7 +244,7 @@ def set_build_number(build_number)
   require "xcodeproj"
 
   project = Xcodeproj::Project.open(PROJECT)
-  ["Hackers", "HackersActionExtension"].each do |target_name|
+  ["Hackers", "HackersActionExtension", "HackersWidget"].each do |target_name|
     target = project.targets.find { |item| item.name == target_name }
     UI.user_error!("Target not found: #{target_name}") unless target
 
@@ -259,7 +260,8 @@ def set_app_store_signing
 
   profiles = {
     "Hackers" => "match AppStore #{APP_IDENTIFIER}",
-    "HackersActionExtension" => "match AppStore #{EXTENSION_IDENTIFIER}"
+    "HackersActionExtension" => "match AppStore #{EXTENSION_IDENTIFIER}",
+    "HackersWidget" => "match AppStore #{WIDGET_IDENTIFIER}"
   }
 
   project = Xcodeproj::Project.open(PROJECT)
@@ -297,7 +299,7 @@ def validate_release_tag!(tag, source: :checkout)
     require_release_tag_build_number!(tag)
     require "nanaimo"
     objects = Nanaimo::Reader.new(release_tag_project(tag)).parse!.as_ruby.fetch("objects")
-    %w[Hackers HackersActionExtension].each do |name|
+    %w[Hackers HackersActionExtension HackersWidget].each do |name|
       target = objects.values.find { |item| item["isa"] == "PBXNativeTarget" && item["name"] == name }
       UI.user_error!("Target #{name} is missing from tag #{tag}") unless target
       configurations = objects.fetch(target.fetch("buildConfigurationList")).fetch("buildConfigurations")
@@ -494,7 +496,7 @@ platform :ios do
       api_key: api_key,
       type: "appstore",
       readonly: true,
-      app_identifier: [APP_IDENTIFIER, EXTENSION_IDENTIFIER],
+      app_identifier: [APP_IDENTIFIER, EXTENSION_IDENTIFIER, WIDGET_IDENTIFIER],
       team_id: TEAM_ID
     )
 
@@ -516,7 +518,8 @@ platform :ios do
         signingStyle: "manual",
         provisioningProfiles: {
           APP_IDENTIFIER => "match AppStore #{APP_IDENTIFIER}",
-          EXTENSION_IDENTIFIER => "match AppStore #{EXTENSION_IDENTIFIER}"
+          EXTENSION_IDENTIFIER => "match AppStore #{EXTENSION_IDENTIFIER}",
+          WIDGET_IDENTIFIER => "match AppStore #{WIDGET_IDENTIFIER}"
         }
       },
       archive_path: "#{RELEASE_DIR}/Hackers.xcarchive",

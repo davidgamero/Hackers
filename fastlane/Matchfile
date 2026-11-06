@@ -4,6 +4,7 @@ type("appstore")
 readonly(true)
 app_identifier([
   "com.weiranzhang.Hackers",
-  "com.weiranzhang.Hackers.ActionExtension"
+  "com.weiranzhang.Hackers.ActionExtension",
+  "com.weiranzhang.Hackers.Widget"
 ])
 team_id("2KB59GPA9B")

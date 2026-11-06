@@ -100,6 +100,12 @@ The extension flow is:
 
 Keep the action extension's `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` aligned with the main app target during releases.
 
+## Widget Extension
+
+`HackersWidget` provides Top Stories widgets in small, medium, and large system families. Its timeline provider fetches one Algolia `front_page` response through the testable `WidgetTopStoriesLoader`, renders sample content when refresh fails, and requests another timeline after roughly 30 minutes. Small widgets deep-link as one surface; medium and large widgets use per-story `Link` destinations. Widget list content measures its available row area and reduces story count before overflowing at constrained or accessibility text sizes.
+
+Keep the widget's `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` aligned with the main app and action extension during releases. App Store distribution also requires a match profile for `com.weiranzhang.Hackers.Widget`.
+
 ## Data And Persistence
 
 Settings use `UserDefaults` through `UserDefaultsProtocol` for testability. Current keys include `safariReaderMode`, `linkBrowserMode`, `ShowThumbnails`, `RememberFeedCategory`, `LastFeedCategory`, `textSize`, `compactFeedDesign`, `DimReadPosts`, and `SwipeToCollapseThreads`. `openInDefaultBrowser` is a legacy key migrated into `linkBrowserMode`.
