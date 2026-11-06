@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA3000010000000000000009 /* HackersWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AA3000010000000000000001 /* HackersWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		AA300001000000000000000E /* Shared in Frameworks */ = {isa = PBXBuildFile; productRef = 243C00122E8B000100000001 /* Shared */; };
+		AA3000010000000000000013 /* HackersWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3000010000000000000010 /* HackersWidgetBundle.swift */; };
+		AA3000010000000000000014 /* TopStoriesWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3000010000000000000011 /* TopStoriesWidget.swift */; };
 		0753D902ECB640FABD16B31F /* HackersUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0F18D1F4D44676A1E7253F /* HackersUITests.swift */; };
 		AA2000010000000000000001 /* HackersUITestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000010000000000000001 /* HackersUITestCase.swift */; };
 		AA2000010000000000000002 /* BrowserCommentsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000010000000000000002 /* BrowserCommentsUITests.swift */; };
@@ -71,6 +75,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AA3000010000000000000001 /* HackersWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HackersWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA3000010000000000000010 /* HackersWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HackersWidgetBundle.swift; sourceTree = "<group>"; };
+		AA3000010000000000000011 /* TopStoriesWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopStoriesWidget.swift; sourceTree = "<group>"; };
+		AA3000010000000000000012 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		241387A51945A6E100D71220 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		2419D02024898DF700740184 /* HackersActionExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HackersActionExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		24F39F8518AFB1150055F8DC /* Hackers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hackers.app; sourceTree = BUILT_PRODUCTS_DIR; };
