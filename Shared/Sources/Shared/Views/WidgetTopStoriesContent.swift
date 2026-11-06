@@ -3,26 +3,22 @@ import SwiftUI
 public struct WidgetTopStoriesListContent: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     private let stories: [WidgetTopStory]
-    private let date: Date
     private let didFail: Bool
     private let family: WidgetStoryLayoutFamily
 
     public init(
         stories: [WidgetTopStory],
-        date: Date,
         didFail: Bool,
         family: WidgetStoryLayoutFamily
     ) {
         self.stories = stories
-        self.date = date
         self.didFail = didFail
         self.family = family
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            header
-            GeometryReader { proxy in
+        GeometryReader { proxy in
+            ZStack(alignment: .topTrailing) {
                 let layout = WidgetStoryLayoutPolicy.layout(
                     availableHeight: proxy.size.height,
                     family: family,
@@ -41,37 +37,22 @@ public struct WidgetTopStoriesListContent: View {
                         .accessibilityIdentifier("widget.story.\(story.id)")
                     }
                 }
+                if didFail {
+                    Image(systemName: "wifi.exclamationmark")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .padding(2)
+                        .accessibilityLabel("Showing sample stories because refresh failed")
+                }
             }
         }
-    }
-
-    private var header: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "newspaper.fill")
-                .font(.subheadline)
-                .foregroundStyle(.orange)
-            Text("Top Stories")
-                .font(.subheadline.weight(.semibold))
-            Spacer()
-            if didFail {
-                Image(systemName: "wifi.exclamationmark")
-                    .foregroundStyle(.secondary)
-                    .accessibilityLabel("Showing sample stories because refresh failed")
-            } else {
-                Text(date, style: .time)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .padding(.bottom, 6)
-        .accessibilityIdentifier("widget.header")
     }
 
     private func storyRow(_ story: WidgetTopStory) -> some View {
         Group {
             if family == .medium {
                 Text(story.title)
-                    .font(.caption.weight(.semibold))
+                    .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.primary)
                     .lineLimit(2)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -113,16 +94,9 @@ public struct WidgetTopStorySmallContent: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Image(systemName: "newspaper.fill")
-                    .foregroundStyle(.orange)
-                Text("Top Story")
-                    .font(.subheadline.weight(.semibold))
-                Spacer(minLength: 0)
-            }
             Text(story.title)
-                .font(.subheadline.weight(.semibold))
-                .lineLimit(dynamicTypeSize.isAccessibilitySize ? 2 : 4)
+                .font(.headline)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 5)
             Spacer(minLength: 0)
             HStack(spacing: 5) {
                 Text(story.domain.uppercased())

@@ -110,8 +110,6 @@ final class FeedAndSettingsUITests: HackersUITestCase {
         let widget = app.descendants(matching: .any)
             .matching(identifier: "widget.fixture.medium").firstMatch
         XCTAssertTrue(widget.waitForExistence(timeout: 5))
-        let header = app.descendants(matching: .any).matching(identifier: "widget.header").firstMatch
-        assertFullyContained(header, in: widget)
         for id in 91_001...91_003 {
             let row = app.descendants(matching: .any)
                 .matching(identifier: "widget.story.\(id)").firstMatch

@@ -84,7 +84,6 @@ private struct TopStoriesWidgetView: View {
             } else {
                 WidgetTopStoriesListContent(
                     stories: entry.stories,
-                    date: entry.date,
                     didFail: entry.didFail,
                     family: family == .systemLarge ? .large : .medium
                 )

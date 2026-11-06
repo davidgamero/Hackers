@@ -92,25 +92,25 @@ struct WidgetStoryLayoutTests {
     @Test("Medium widget fits three normal text rows without exceeding its row area")
     func mediumFitsThreeRows() {
         let layout = WidgetStoryLayoutPolicy.layout(
-            availableHeight: 100,
+            availableHeight: 126,
             family: .medium,
             usesAccessibilityText: false
         )
 
         #expect(layout.storyCount == 3)
-        #expect(layout.requiredHeight <= 100)
+        #expect(layout.requiredHeight <= 126)
     }
 
     @Test("Large widget fits six two-line rows and metadata")
     func largeFitsSixDetailedRows() {
         let layout = WidgetStoryLayoutPolicy.layout(
-            availableHeight: 270,
+            availableHeight: 300,
             family: .large,
             usesAccessibilityText: false
         )
 
         #expect(layout.storyCount == 6)
-        #expect(layout.requiredHeight <= 270)
+        #expect(layout.requiredHeight <= 300)
     }
 
     @Test("Medium widget reduces row count when its row area is shorter")

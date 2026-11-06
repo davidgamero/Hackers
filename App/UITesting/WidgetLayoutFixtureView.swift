@@ -32,7 +32,6 @@ struct WidgetLayoutFixtureView: View {
             Color(.systemGroupedBackground).ignoresSafeArea()
             WidgetTopStoriesListContent(
                 stories: stories,
-                date: Date(timeIntervalSince1970: 1_700_000_000),
                 didFail: false,
                 family: .medium
             )
