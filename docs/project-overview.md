@@ -67,7 +67,7 @@ Current package set:
 
 ## Feature Workflows
 
-Feed is the main browsing surface. `FeedViewModel` loads `PostType` feeds, deduplicates posts by ID, annotates fetched posts with bookmark/read state, and handles pagination. Top, Ask, Show, Best, and Active use page-based loading; Newest and Jobs use Hacker News `next` cursor loading. The Bookmarks feed is local/iCloud state from `BookmarksController`, not a Hacker News endpoint.
+Feed is the main browsing surface. `FeedViewModel` loads `PostType` feeds, deduplicates posts by ID, annotates fetched posts with bookmark/read state, and handles pagination. Top, Ask, Show, Best, and Active use page-based loading; Newest and Jobs use Hacker News `next` cursor loading. Past uses an empty popular Algolia story query with Day, Week (default), Month, and Year date ranges. The Bookmarks feed is local/iCloud state from `BookmarksController`, not a Hacker News endpoint.
 
 Search is part of the Feed feature. Search queries use `SearchUseCase`, keep separate paginated result state, support popular/recent sorting, support date ranges, and annotate search results with bookmark/read state the same way feed results are annotated.
 

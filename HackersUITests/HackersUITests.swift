@@ -101,6 +101,29 @@ final class FeedAndSettingsUITests: HackersUITestCase {
         )
     }
 
+    func testPastFeedUsesDateRangeFilters() throws {
+        launchApp()
+        assertFullyContained(app.collectionViews[AccessibilityIdentifier.Feed.list], in: app, timeout: 8)
+
+        assertHittable(app.navigationBars.buttons["Top"]).tap()
+        assertHittable(app.buttons["Past"]).tap()
+
+        let range = assertHittable(app.buttons["feed.past.range"])
+        XCTAssertEqual(range.label, "Week")
+        assertHasVisibleIntersection(
+            app.buttons[AccessibilityIdentifier.Feed.post(screenshotPostID)],
+            in: app
+        )
+
+        range.tap()
+        assertHittable(app.buttons["Month"]).tap()
+        XCTAssertEqual(assertHittable(app.buttons["feed.past.range"]).label, "Month")
+        assertHasVisibleIntersection(
+            app.buttons[AccessibilityIdentifier.Feed.post(screenshotPostID)],
+            in: app
+        )
+    }
+
     func testLoginFailureAndSuccessUseMockedAuthentication() throws {
         launchApp()
 

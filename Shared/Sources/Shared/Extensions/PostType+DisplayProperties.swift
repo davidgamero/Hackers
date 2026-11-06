@@ -16,6 +16,7 @@ public extension PostType {
         case .jobs: "Jobs"
         case .newest: "New"
         case .best: "Best"
+        case .past: "Past"
         case .active: "Active"
         case .bookmarks: "Bookmarks"
         }
@@ -29,6 +30,7 @@ public extension PostType {
         case .jobs: "briefcase"
         case .newest: "clock"
         case .best: "star"
+        case .past: "calendar"
         case .active: "bolt"
         case .bookmarks: "bookmark"
         }

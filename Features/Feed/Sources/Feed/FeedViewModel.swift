@@ -18,6 +18,7 @@ public final class FeedViewModel: @unchecked Sendable {
     public var isLoadingMore = false
     public private(set) var paginationError: Error?
     public var postType: Domain.PostType = .news
+    public var pastDateRange: SearchDateRange = .pastWeek
 
     private var postIds: Set<Int> = Set()
     private var pageIndex = 1
@@ -38,6 +39,8 @@ public final class FeedViewModel: @unchecked Sendable {
     private var rememberFeedCategorySetting: Bool
     private var searchResultIds: Set<Int> = Set()
     private let searchHitsPerPage = 20
+    private var pastPage = 0
+    private var canLoadMorePastPosts = false
 
     public var posts: [Domain.Post] { feedLoader.data }
     public var isLoading: Bool { feedLoader.isLoading }
@@ -102,10 +105,34 @@ extension FeedViewModel {
     public func loadNextPage() async {
         guard !isLoadingMore && !isLoading && !posts.isEmpty else { return }
         guard postType != .bookmarks else { return }
+        guard postType != .past || canLoadMorePastPosts else { return }
 
         isLoadingMore = true
         paginationError = nil
         defer { isLoadingMore = false }
+
+        if postType == .past {
+            do {
+                let results = try await searchUseCase.searchPosts(
+                    query: "",
+                    sort: .popular,
+                    dateRange: pastDateRange,
+                    page: pastPage + 1,
+                    hitsPerPage: searchHitsPerPage
+                )
+                await bookmarksController.refreshBookmarks()
+                await readStatusController.refreshReadStatus()
+                let annotatedPosts = annotatedPosts(from: results.posts)
+                let newPosts = annotatedPosts.filter { !postIds.contains($0.id) }
+                feedLoader.data.append(contentsOf: newPosts)
+                postIds.formUnion(newPosts.map(\.id))
+                pastPage = results.page
+                canLoadMorePastPosts = results.hasMore
+            } catch {
+                paginationError = error
+            }
+            return
+        }
 
         let usesCursorPagination = postType == .newest || postType == .jobs
         let requestedPage = usesCursorPagination ? pageIndex : pageIndex + 1
@@ -164,6 +191,25 @@ extension FeedViewModel {
             }
         }
 
+        if postType == .past {
+            let results = try await searchUseCase.searchPosts(
+                query: "",
+                sort: .popular,
+                dateRange: pastDateRange,
+                page: 0,
+                hitsPerPage: searchHitsPerPage
+            )
+            await bookmarksController.refreshBookmarks()
+            await readStatusController.refreshReadStatus()
+            return await MainActor.run {
+                let annotated = self.annotatedPosts(from: results.posts)
+                self.postIds = Set(annotated.map(\.id))
+                self.pastPage = results.page
+                self.canLoadMorePastPosts = results.hasMore
+                return annotated
+            }
+        }
+
         await bookmarksController.refreshBookmarks()
         await readStatusController.refreshReadStatus()
 
@@ -208,6 +254,15 @@ extension FeedViewModel {
     }
 
     @MainActor
+    public func changePastDateRange(_ dateRange: SearchDateRange) async {
+        guard dateRange != .allTime, pastDateRange != dateRange else { return }
+        pastDateRange = dateRange
+        guard postType == .past else { return }
+        reset(clearPosts: true)
+        await feedLoader.refresh()
+    }
+
+    @MainActor
     private func reset(clearPosts: Bool = false) {
         if clearPosts {
             feedLoader.data = []
@@ -215,6 +270,8 @@ extension FeedViewModel {
         postIds = Set()
         pageIndex = 1
         lastPostId = 0
+        pastPage = 0
+        canLoadMorePastPosts = false
         isFetching = false
         paginationError = nil
         feedLoader.reset()

@@ -158,7 +158,7 @@ final class UITestFixtures: PostUseCase, CommentUseCase, SearchUseCase, @uncheck
     func getPosts(type: PostType, page: Int, nextId: Int?) async throws -> [Post] {
         guard page == 1, nextId == nil else { return [] }
         switch type {
-        case .news, .best, .active:
+        case .news, .best, .past, .active:
             return posts
         case .newest:
             return posts.reversed()
@@ -281,13 +281,15 @@ final class UITestFixtures: PostUseCase, CommentUseCase, SearchUseCase, @uncheck
         hitsPerPage: Int
     ) async throws -> SearchResultsPage {
         let normalizedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        guard !normalizedQuery.isEmpty else {
-            return SearchResultsPage(posts: [], page: page, totalPages: 0, totalResults: 0, hasMore: false)
-        }
-        let matches = searchPosts.filter { post in
-            post.title.lowercased().contains(normalizedQuery)
-                || post.by.lowercased().contains(normalizedQuery)
-                || post.url.host?.lowercased().contains(normalizedQuery) == true
+        let matches = if normalizedQuery.isEmpty {
+            // The Past feed intentionally uses an empty popular-search query.
+            searchPosts
+        } else {
+            searchPosts.filter { post in
+                post.title.lowercased().contains(normalizedQuery)
+                    || post.by.lowercased().contains(normalizedQuery)
+                    || post.url.host?.lowercased().contains(normalizedQuery) == true
+            }
         }
         let pageSize = max(hitsPerPage, 1)
         let start = page * pageSize

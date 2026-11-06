@@ -204,6 +204,79 @@ struct FeedViewModelTests {
     }
 
     @MainActor
+    @Test("Past feed loads popular stories from the past week by default")
+    func pastFeedDefaultsToPopularWeek() async {
+        let searchUseCase = StubSearchUseCase()
+        searchUseCase.enqueuePage(posts: [SampleData.post(id: 301)], page: 0, totalPages: 2)
+        let postUseCase = StubPostUseCase()
+        let viewModel = FeedViewModel(
+            postUseCase: postUseCase,
+            voteUseCase: StubVoteUseCase(),
+            bookmarksController: BookmarksController(bookmarksUseCase: StubBookmarksUseCase()),
+            searchUseCase: searchUseCase
+        )
+
+        await viewModel.changePostType(.past)
+
+        #expect(viewModel.posts.map(\.id) == [301])
+        #expect(postUseCase.requestedPages.isEmpty)
+        let request = try? #require(searchUseCase.receivedRequests.first)
+        #expect(request?.query == "")
+        #expect(request?.sort == .popular)
+        #expect(request?.dateRange == .pastWeek)
+        #expect(request?.page == 0)
+    }
+
+    @MainActor
+    @Test("Changing the Past feed range replaces results")
+    func changingPastFeedRangeReplacesResults() async {
+        let searchUseCase = StubSearchUseCase()
+        searchUseCase.enqueuePage(posts: [SampleData.post(id: 301)], page: 0, totalPages: 1)
+        searchUseCase.enqueuePage(posts: [SampleData.post(id: 401)], page: 0, totalPages: 1)
+        let viewModel = FeedViewModel(
+            postUseCase: StubPostUseCase(),
+            voteUseCase: StubVoteUseCase(),
+            bookmarksController: BookmarksController(bookmarksUseCase: StubBookmarksUseCase()),
+            searchUseCase: searchUseCase
+        )
+        await viewModel.changePostType(.past)
+
+        await viewModel.changePastDateRange(.pastMonth)
+
+        #expect(viewModel.posts.map(\.id) == [401])
+        #expect(searchUseCase.receivedRequests.map(\.dateRange) == [.pastWeek, .pastMonth])
+        #expect(searchUseCase.receivedRequests.map(\.page) == [0, 0])
+    }
+
+    @MainActor
+    @Test("Past feed pagination requests the next Algolia page and removes duplicates")
+    func pastFeedPaginationAppendsUniquePosts() async {
+        let searchUseCase = StubSearchUseCase()
+        searchUseCase.enqueuePage(
+            posts: [SampleData.post(id: 301), SampleData.post(id: 302)],
+            page: 0,
+            totalPages: 2
+        )
+        searchUseCase.enqueuePage(
+            posts: [SampleData.post(id: 302), SampleData.post(id: 303)],
+            page: 1,
+            totalPages: 2
+        )
+        let viewModel = FeedViewModel(
+            postUseCase: StubPostUseCase(),
+            voteUseCase: StubVoteUseCase(),
+            bookmarksController: BookmarksController(bookmarksUseCase: StubBookmarksUseCase()),
+            searchUseCase: searchUseCase
+        )
+        await viewModel.changePostType(.past)
+
+        await viewModel.loadNextPage()
+
+        #expect(viewModel.posts.map(\.id) == [301, 302, 303])
+        #expect(searchUseCase.receivedRequests.map(\.page) == [0, 1])
+    }
+
+    @MainActor
     @Test("Toggling bookmark updates post state")
     func togglingBookmarkUpdatesPostState() async {
         let postUseCase = StubPostUseCase()

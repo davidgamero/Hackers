@@ -22,6 +22,7 @@ FULL_TESTS=(
   FeedAndSettingsUITests/testSmokeOpenCustomBrowserFromFeed
   FeedAndSettingsUITests/testSearchUsesMockedAlgoliaResults
   FeedAndSettingsUITests/testCategoryMenuUsesMockedFeeds
+  FeedAndSettingsUITests/testPastFeedUsesDateRangeFilters
   FeedAndSettingsUITests/testLoginFailureAndSuccessUseMockedAuthentication
   BrowserCommentsUITests/testBrowserControlsAdaptToVerticalBar
   BrowserCommentsUITests/testCustomBrowserExpandedCommentsBlockMediaAutoplay

@@ -34,6 +34,13 @@ extension PostRepository {
                 throw HackersKitError.requestFailure
             }
             url = constructedURL
+        } else if type == .past {
+            guard let constructedURL = URL(
+                string: "https://news.ycombinator.com/front?p=\(page)",
+            ) else {
+                throw HackersKitError.requestFailure
+            }
+            url = constructedURL
         } else {
             guard let constructedURL = URL(
                 string: "https://news.ycombinator.com/\(type.rawValue)?p=\(page)",

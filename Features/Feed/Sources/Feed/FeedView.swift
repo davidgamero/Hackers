@@ -126,7 +126,7 @@ private extension FeedView {
     }
 
     var primaryPostTypes: [Domain.PostType] {
-        [.news, .ask, .show, .jobs, .newest, .best, .active]
+        [.news, .ask, .show, .jobs, .newest, .best, .past, .active]
     }
 
     var secondaryPostTypes: [Domain.PostType] {
@@ -144,6 +144,8 @@ private extension FeedView {
         Group {
             if viewModel.hasActiveSearch {
                 searchContentView
+            } else if viewModel.postType == .past {
+                pastFeedContent
             } else if viewModel.isLoading && viewModel.posts.isEmpty && viewModel.postType != .bookmarks {
                 AppLoadingStateView(message: "Loading...")
             } else if shouldShowBookmarksEmptyState {
@@ -160,6 +162,55 @@ private extension FeedView {
             }
         }
         .animation(.default, value: viewModel.hasActiveSearch)
+    }
+
+    @ViewBuilder
+    private var pastFeedContent: some View {
+        VStack(spacing: 0) {
+            pastDateRangeBar
+            Divider()
+            if viewModel.isLoading && viewModel.posts.isEmpty {
+                AppLoadingStateView(message: "Loading...")
+            } else {
+                feedListView(posts: viewModel.posts, enablePagination: true)
+                    .refreshable {
+                        await viewModel.refreshFeed()
+                    }
+            }
+        }
+    }
+
+    private var pastDateRangeBar: some View {
+        HStack(spacing: 12) {
+            Text("Best stories from")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            Spacer()
+            Menu {
+                ForEach(pastDateRanges, id: \.self) { range in
+                    Button {
+                        Task { await viewModel.changePastDateRange(range) }
+                    } label: {
+                        Label {
+                            Text(range.pastFeedDisplayName)
+                        } icon: {
+                            if range == viewModel.pastDateRange {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                }
+            } label: {
+                Label(viewModel.pastDateRange.pastFeedDisplayName, systemImage: "calendar")
+            }
+            .accessibilityIdentifier("feed.past.range")
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+    }
+
+    private var pastDateRanges: [SearchDateRange] {
+        [.last24Hours, .pastWeek, .pastMonth, .pastYear]
     }
 
     @ViewBuilder
@@ -614,6 +665,18 @@ private extension SearchDateRange {
             "Past Month"
         case .pastYear:
             "Past Year"
+        }
+    }
+}
+
+private extension SearchDateRange {
+    var pastFeedDisplayName: String {
+        switch self {
+        case .allTime: "All Time"
+        case .last24Hours: "Day"
+        case .pastWeek: "Week"
+        case .pastMonth: "Month"
+        case .pastYear: "Year"
         }
     }
 }

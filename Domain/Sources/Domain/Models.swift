@@ -116,6 +116,7 @@ public enum PostType: String, CaseIterable, Sendable {
     case jobs
     case newest
     case best
+    case past
     case active
     case bookmarks
 }
@@ -268,6 +269,7 @@ public extension PostType {
         case .jobs: "Jobs"
         case .newest: "New"
         case .best: "Best"
+        case .past: "Past"
         case .active: "Active"
         case .bookmarks: "Bookmarks"
         }
