@@ -51,17 +51,31 @@ public struct WidgetTopStoriesListContent: View {
     private func storyRow(_ story: WidgetTopStory) -> some View {
         Group {
             if family == .medium {
-                Text(story.title)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.primary)
-                    .lineLimit(2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                mediumStoryRow(story)
             } else {
                 detailedStoryRow(story)
             }
         }
         .contentShape(.rect)
         .accessibilityElement(children: .combine)
+    }
+
+    private func mediumStoryRow(_ story: WidgetTopStory) -> some View {
+        VStack(alignment: .leading, spacing: 1) {
+            Text(story.title)
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(.primary)
+                .lineLimit(2)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            HStack(spacing: 6) {
+                Spacer(minLength: 0)
+                Label("\(story.score)", systemImage: "arrow.up")
+                Label("\(story.commentsCount)", systemImage: "message")
+            }
+            .font(.system(size: 11))
+            .foregroundStyle(.secondary)
+            .labelStyle(.titleAndIcon)
+        }
     }
 
     private func detailedStoryRow(_ story: WidgetTopStory) -> some View {
@@ -103,6 +117,7 @@ public struct WidgetTopStorySmallContent: View {
                     .lineLimit(1)
                 Spacer(minLength: 2)
                 Label("\(story.score)", systemImage: "arrow.up")
+                Label("\(story.commentsCount)", systemImage: "message")
             }
             .font(.caption2)
             .foregroundStyle(.secondary)

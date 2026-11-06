@@ -98,6 +98,8 @@ struct WidgetStoryLayoutTests {
         )
 
         #expect(layout.storyCount == 3)
+        #expect(layout.rowHeight == 41)
+        #expect(layout.requiredHeight == 125)
         #expect(layout.requiredHeight <= 126)
     }
 
@@ -116,13 +118,13 @@ struct WidgetStoryLayoutTests {
     @Test("Medium widget reduces row count when its row area is shorter")
     func constrainedMediumFallsBack() {
         let layout = WidgetStoryLayoutPolicy.layout(
-            availableHeight: 82,
+            availableHeight: 83,
             family: .medium,
             usesAccessibilityText: false
         )
 
         #expect(layout.storyCount == 2)
-        #expect(layout.requiredHeight <= 82)
+        #expect(layout.requiredHeight <= 83)
     }
 
     @Test("Accessibility text uses a taller row budget and cannot overflow")

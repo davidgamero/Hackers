@@ -100,7 +100,7 @@ public enum WidgetStoryLayoutPolicy {
         case (.large, true): 72
         case (.large, false): 49
         case (.medium, true): 62
-        case (.medium, false): 40
+        case (.medium, false): 41
         case (.small, true): 52
         case (.small, false): 32
         }
