@@ -13,7 +13,7 @@ struct WidgetLayoutFixtureView: View {
         ),
         Self.makeStory(
             id: 91_002,
-            title: "Another unusually long story title that must stay on a single line",
+            title: "Another unusually long story title that needs enough context to be useful",
             domain: "NEWS.YCOMBINATOR.COM",
             score: 876,
             comments: 543

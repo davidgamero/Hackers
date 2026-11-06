@@ -68,11 +68,27 @@ public struct WidgetTopStoriesListContent: View {
     }
 
     private func storyRow(_ story: WidgetTopStory) -> some View {
+        Group {
+            if family == .medium {
+                Text(story.title)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                detailedStoryRow(story)
+            }
+        }
+        .contentShape(.rect)
+        .accessibilityElement(children: .combine)
+    }
+
+    private func detailedStoryRow(_ story: WidgetTopStory) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(story.title)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.primary)
-                .lineLimit(1)
+                .lineLimit(2)
             HStack(spacing: 5) {
                 Text(story.domain.uppercased())
                     .lineLimit(1)
@@ -84,8 +100,6 @@ public struct WidgetTopStoriesListContent: View {
             .foregroundStyle(.secondary)
             .labelStyle(.titleAndIcon)
         }
-        .contentShape(.rect)
-        .accessibilityElement(children: .combine)
     }
 }
 

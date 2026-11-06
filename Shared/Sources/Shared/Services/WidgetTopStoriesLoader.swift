@@ -96,7 +96,12 @@ public enum WidgetStoryLayoutPolicy {
         family: WidgetStoryLayoutFamily,
         usesAccessibilityText: Bool
     ) -> WidgetStoryLayout {
-        let rowHeight: CGFloat = usesAccessibilityText ? 52 : 32
+        let rowHeight: CGFloat = switch (family, usesAccessibilityText) {
+        case (.large, true): 64
+        case (.large, false): 44
+        case (_, true): 52
+        case (_, false): 32
+        }
         let dividerHeight: CGFloat = 1
         let maximum = switch family {
         case .small: 1
