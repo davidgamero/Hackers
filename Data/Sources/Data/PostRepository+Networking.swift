@@ -7,7 +7,6 @@
 
 import Domain
 import Foundation
-import SwiftSoup
 
 extension PostRepository {
     // MARK: - Networking helpers
@@ -66,7 +65,7 @@ extension PostRepository {
             }
             let html = try await networkManager.get(url: url)
             combined += html
-            hasMore = try hasMoreComments(in: html)
+            hasMore = hasMoreComments(in: html)
             page += 1
         }
 
@@ -76,10 +75,14 @@ extension PostRepository {
         return combined
     }
 
-    /// Returns true when `html` contains a `morelink`, indicating another comment page.
-    private func hasMoreComments(in html: String) throws -> Bool {
-        let document = try SwiftSoup.parse(html)
-        return try !document.select("a.morelink").isEmpty()
+    /// Returns true when `html` contains HN's `morelink` class. Avoid parsing every page
+    /// here: the complete HTML is parsed after pagination, and doing both made large threads
+    /// pay the SwiftSoup cost twice (particularly noticeable in unoptimized development builds).
+    private func hasMoreComments(in html: String) -> Bool {
+        html.range(
+            of: #"class\s*=\s*["']morelink["']"#,
+            options: .regularExpression
+        ) != nil
     }
 
     func hackerNewsURL(id: Int, page: Int = 1) -> URL? {

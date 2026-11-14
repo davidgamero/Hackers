@@ -12,6 +12,13 @@ import Observation
 import Shared
 import SwiftUI
 
+enum CommentsContentState: Equatable {
+    case loading
+    case failure(String)
+    case empty
+    case loaded
+}
+
 @MainActor
 @Observable
 public final class CommentsViewModel: @unchecked Sendable {
@@ -50,6 +57,13 @@ public final class CommentsViewModel: @unchecked Sendable {
     public var comments: [Comment] { commentsLoader.data }
     public var isLoading: Bool { commentsLoader.isLoading }
     public var error: Error? { commentsLoader.error }
+    var contentState: CommentsContentState {
+        // Keep already-rendered comments visible while a refresh runs or fails.
+        if !comments.isEmpty { return .loaded }
+        if isLoading || !commentsLoader.hasAttemptedLoad { return .loading }
+        if let error { return .failure(error.localizedDescription) }
+        return .empty
+    }
     public private(set) var isPostLoading: Bool
 
     /// Mutable access to the loaded comments for value-type updates (visibility, voting).
@@ -158,12 +172,8 @@ extension CommentsViewModel {
         if post == nil {
             isPostLoading = true
         }
-        if let currentPost = post {
-            await bookmarksController.refreshBookmarks()
-            var updatedPost = currentPost
-            updatedPost.isBookmarked = bookmarksController.isBookmarked(currentPost.id)
-            post = updatedPost
-        }
+        // `fetchComments` refreshes and applies bookmark state. Start the loader first so
+        // the UI doesn't briefly claim the thread is empty while bookmarks are refreshed.
         await commentsLoader.loadIfNeeded()
         rebuildCommentIndexes()
         updateVisibleComments()
@@ -174,7 +184,6 @@ extension CommentsViewModel {
         if post == nil {
             isPostLoading = true
         }
-        await bookmarksController.refreshBookmarks()
         await commentsLoader.refresh()
         rebuildCommentIndexes()
         updateVisibleComments()

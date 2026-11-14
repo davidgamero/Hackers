@@ -222,6 +222,7 @@ struct CollapsedPostHeaderView: View {
     let post: Post
     let votingState: VotingState?
     let isLoading: Bool
+    let hasLoadError: Bool
     let onUpvote: () -> Void
     let onExpand: () -> Void
     let disablesUpvote: Bool
@@ -261,7 +262,7 @@ struct CollapsedPostHeaderView: View {
                         namespace: matchedGeometryNamespace,
                         isSource: isMatchedGeometrySource
                     )
-                commentsPill
+                commentsStatus
                     .postHeaderMatchedGeometry(
                         PostHeaderMatchedGeometryElement.comments(postID: post.id),
                         namespace: matchedGeometryNamespace,
@@ -282,6 +283,25 @@ struct CollapsedPostHeaderView: View {
         let host = post.url.host ?? "Hackers"
         let trimmed = host.hasPrefix("www.") ? String(host.dropFirst(4)) : host
         return trimmed.uppercased()
+    }
+
+    @ViewBuilder
+    private var commentsStatus: some View {
+        if isLoading {
+            ProgressView()
+                .controlSize(.small)
+                .frame(width: 48, height: 24)
+                .background(.fill.quaternary, in: .capsule)
+                .accessibilityLabel("Loading comments")
+        } else if hasLoadError {
+            Label("Comments unavailable", systemImage: "exclamationmark.triangle")
+                .labelStyle(.iconOnly)
+                .foregroundStyle(.secondary)
+                .frame(width: 48, height: 24)
+                .background(.fill.quaternary, in: .capsule)
+        } else {
+            commentsPill
+        }
     }
 
     private var commentsPill: some View {

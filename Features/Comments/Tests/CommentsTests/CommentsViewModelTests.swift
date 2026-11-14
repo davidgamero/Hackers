@@ -68,6 +68,40 @@ struct CommentsViewModelTests {
         #expect(!sut.isLoading)
         #expect(!sut.isPostLoading)
         #expect(sut.error != nil)
+        guard case .failure = sut.contentState else {
+            Issue.record("A failed comment request must be presented as an error, not an empty thread")
+            return
+        }
+    }
+
+    @Test("Comments presentation distinguishes initial loading from a genuinely empty thread")
+    @MainActor
+    func commentsContentStateDistinguishesLoadingAndEmpty() async {
+        #expect(sut.contentState == .loading)
+
+        mockPostUseCase.mockPost = createPostWithComments(comments: [])
+        await sut.loadComments()
+
+        #expect(sut.contentState == .empty)
+    }
+
+    @Test("Comments presentation retains loaded rows while refreshing")
+    @MainActor
+    func commentsContentStateRetainsRowsWhileRefreshing() async {
+        let comment = createTestComment(id: 11, level: 0)
+        mockPostUseCase.mockPost = createPostWithComments(comments: [comment])
+        await sut.loadComments()
+        #expect(sut.contentState == .loaded)
+
+        mockPostUseCase.shouldDelay = true
+        let refresh = Task { await sut.refreshComments() }
+        for _ in 0..<100 where !sut.isLoading {
+            try? await Task.sleep(for: .milliseconds(1))
+        }
+
+        #expect(sut.isLoading)
+        #expect(sut.contentState == .loaded)
+        await refresh.value
     }
 
     @Test("Loading comments does not proceed when already loading")

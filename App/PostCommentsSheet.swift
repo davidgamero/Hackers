@@ -532,6 +532,7 @@ struct PostCommentsSheet: View {
                 post: post,
                 votingState: votingViewModel.votingState(for: post),
                 isLoading: viewModel.isLoading,
+                hasLoadError: viewModel.error != nil && viewModel.comments.isEmpty,
                 onUpvote: { handleCollapsedUpvote(for: post) },
                 onExpand: onExpand,
                 disablesUpvote: presentation.suppressesCollapsedUpvote,

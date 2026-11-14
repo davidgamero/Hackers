@@ -605,6 +605,23 @@ struct PostRepositoryTests {
         #expect(comments.map(\.id) == [601, 602, 603, 604])
     }
 
+    @Test("Follows pagination when Hacker News uses a single-quoted morelink class")
+    func getCommentsFollowsSingleQuotedPagination() async throws {
+        let storyID = 556
+        let firstPage = createMockSinglePostWithCommentsHTML(
+            storyID: storyID, commentIDs: [611], morelink: true
+        ).replacingOccurrences(of: "class=\"morelink\"", with: "class='morelink'")
+        mockNetworkManager.enqueueGetResponse(firstPage)
+        mockNetworkManager.enqueueGetResponse(
+            createMockCommentsPageHTML(storyID: storyID, commentIDs: [612], morelink: false)
+        )
+
+        let comments = try await postRepository.getComments(for: createTestPostWithId(storyID))
+
+        #expect(mockNetworkManager.getCallCount == 2)
+        #expect(comments.map(\.id) == [611, 612])
+    }
+
     @Test("Does not fetch additional pages when there is no morelink")
     func getCommentsSinglePage() async throws {
         mockNetworkManager.stubbedGetResponse =

@@ -303,7 +303,25 @@ struct AdaptiveCommentsToolbarActions: ToolbarContent {
 
 struct LoadingView: View {
     var body: some View {
-        AppLoadingStateView(message: "Loading...")
+        AppLoadingStateView(message: "Loading comments...")
+    }
+}
+
+struct CommentsLoadFailureView: View {
+    let message: String
+    let onRetry: () -> Void
+
+    var body: some View {
+        VStack(spacing: 12) {
+            AppEmptyStateView(
+                iconSystemName: "exclamationmark.triangle",
+                title: "Unable to load comments",
+                subtitle: message,
+                fillsSpace: false
+            )
+            Button("Try Again", systemImage: "arrow.clockwise", action: onRetry)
+                .buttonStyle(.borderedProminent)
+        }
     }
 }
 

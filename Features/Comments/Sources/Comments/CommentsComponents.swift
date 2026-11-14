@@ -484,15 +484,22 @@ private extension CommentsContentView {
 
     @ViewBuilder
     private func commentsSection(for post: Post) -> some View {
-        if viewModel.isLoading {
+        switch viewModel.contentState {
+        case .loading:
             LoadingView()
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 24)
-        } else if viewModel.comments.isEmpty {
+        case let .failure(message):
+            CommentsLoadFailureView(message: message) {
+                Task { await viewModel.refreshComments() }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 24)
+        case .empty:
             EmptyCommentsView()
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 24)
-        } else {
+        case .loaded:
             commentsRows(for: post)
         }
     }
